@@ -1,6 +1,7 @@
 import express from 'express'
 import * as cartService from '../services/cart.js'
 import createItem from '../services/itens.js'
+import { validateAddItem } from '../middlewares/validation.js'
 
 
 const router = express.Router()
@@ -8,26 +9,31 @@ const myCart = [] // Carrinho de compras
 
 
 
-
-
-
 // Endpoint para adicionar itens ao carrinho
-router.post('/cart/add', async (req,res) => {
-  const { nameItem, price, quantity } = req.body
-  const item = await createItem(nameItem, price, quantity)
-  await cartService.addItem(myCart, item)
-  res.status(201).json({ message: 'Item added to cart!', cart: myCart })
+router.post('/cart/add', validateAddItem, async (req,res,next) => {
+  try {
+    const { nameItem, price, quantity } = req.body
+    const item = await createItem(nameItem, price, quantity)
+    await cartService.addItem(myCart, item)
+    res.status(201).json({ message: 'Item added to cart!', cart: myCart })
+  } catch (error) {
+    next(error) // Passa o erro para o middleware de tratamento de erros
+  }
 })
 
 // Endpoint para remover o item do carrinho
-router.post('/cart/remove', async (req,res) => {
-  const { nameItem } = req.body
-  const item = myCart.find((item) => item.nameItem === nameItem)
-  if(item){
+router.post('/cart/remove:nameItem', async (req,res,next) => {
+  try {
+    const { nameItem } = req.body
+    const item = myCart.find((item) => item.nameItem === nameItem)
+    if(item){
     await cartService.removeItem(myCart, item);
     res.json({ message: 'Item removed from cart', cart: myCart })
   } else {
     res.status(404).json({ message: 'Item not found' });
+  }
+  } catch (error) {
+    next(error); // Passa o erro para o middleware de tratamento de erros
   }
 })
 
@@ -39,9 +45,13 @@ router.get('/cart', async (req,res) => {
 })
 
 // Endpoint para calcular o total do carrinho
-router.get('/cart/total', async (req, res) => {
-  const total = await cartService.calculatedTotal(myCart);
-  res.json({ total });
+router.get('/cart/total', async (req, res,next) => {
+  try {
+    const total = await cartService.calculatedTotal(myCart);
+    res.json({ total });
+  } catch (error) {
+    next(error); // Passa o erro para o middleware de tratamento de erros
+  }
 });
 
 
