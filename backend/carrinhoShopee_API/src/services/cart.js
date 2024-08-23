@@ -17,9 +17,8 @@ async function addItem(userCart, item){
 
 // Função para calcular o total do carrinho
 async function calculatedTotal(userCart){
-  console.log("\nYour shopee checkout total is: ")
-  const result = userCart.reduce((total, item) => total + item.subTotal(), 0)
-  console.log(`Total: ${result}\n`)
+  const total = userCart.reduce((sum, item) => sum + item.subTotal(), 0);
+  return total;
 }
 
 // Função que remove um item por inteiro
