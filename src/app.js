@@ -9,7 +9,7 @@ console.log("\nWelcome to your shopee checkout!")
 
 // Itens pré setados
 const item1 = await createItem("Mouse", 29.99, 3)
-const item2 = await createItem("Teclado", 299.00, 5)
+const item2 = await createItem("Teclado", 310.00, 5)
 const item3 = await createItem("Monitor", 9.99, 4)
 
 // Adicionando item as minhas variáveis (myCart)

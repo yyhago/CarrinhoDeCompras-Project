@@ -1,6 +1,18 @@
 // Função para adicionar um item novo
 async function addItem(userCart, item){
-  userCart.push(item)
+  
+  const indexFound = userCart.findIndex((p) => p.nameItem === item.nameItem)
+
+  if(indexFound !== -1){
+    // Se o item já existe no carrinho, apenas incrementa a quantidade e atualiza o subtotal
+    userCart[indexFound].quantity += item.quantity;
+    userCart[indexFound].subTotal = () => userCart[indexFound].price * userCart[indexFound].quantity
+  } else{
+    // Caso não exista, adicione no carrinho
+    userCart.push(item)
+  }
+
+
 }
 
 // Função para calcular o total do carrinho
@@ -17,21 +29,16 @@ async function removeItem(userCart, item){
   const indexFound = userCart.findIndex((p) => p.nameItem === item.nameItem)
 
   // Caso não encontre o item
-  if(indexFound == -1){
+  if(indexFound === -1){
     console.log("Item não encontrado")
     return
   }
 
-  // Item > 1 subtraia um item
-  if(userCart[indexFound].quantity > 1){
-    userCart[indexFound].quantity -= 1
-    return
-  }
-
-  // Caso item = 1 deletar o item
-  if(userCart[indexFound].quantity === 1){
-    userCart.splice(indexFound, 1)
-    return
+  if (userCart[indexFound].quantity > 1) {
+    userCart[indexFound].quantity -= 1;
+    userCart[indexFound].subTotal = () => userCart[indexFound].price * userCart[indexFound].quantity;
+  } else {
+    userCart.splice(indexFound, 1);
   }
 
 }
