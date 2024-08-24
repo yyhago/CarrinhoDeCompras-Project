@@ -22,20 +22,20 @@ router.post('/cart/add', validateAddItem, async (req,res,next) => {
 })
 
 // Endpoint para remover o item do carrinho
-router.post('/cart/remove:nameItem', async (req,res,next) => {
+router.post('/cart/remove/:nameItem', async (req, res, next) => {
   try {
-    const { nameItem } = req.body
-    const item = myCart.find((item) => item.nameItem === nameItem)
-    if(item){
-    await cartService.removeItem(myCart, item);
-    res.json({ message: 'Item removed from cart', cart: myCart })
-  } else {
-    res.status(404).json({ message: 'Item not found' });
-  }
+    const { nameItem } = req.params; // Obtém o nome do item dos parâmetros da URL
+    const itemIndex = myCart.findIndex((item) => item.nameItem === nameItem);
+    if (itemIndex !== -1) {
+      myCart.splice(itemIndex, 1); // Remove o item do carrinho
+      res.json({ message: 'Item removed from cart', cart: myCart });
+    } else {
+      res.status(404).json({ message: 'Item not found' });
+    }
   } catch (error) {
     next(error); // Passa o erro para o middleware de tratamento de erros
   }
-})
+});
 
 
 // Endpoint para exibir os itens do carrinho
